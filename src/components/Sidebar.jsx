@@ -36,7 +36,7 @@ function SidebarLink({ href, icon, label }) {
 function SideFooter() {
     return (
         <>
-            <div classNameName="sidebar-footer">
+            <div className="sidebar-footer">
                 <div className="user-card">
                     <div className="user-avatar">@initials</div>
                     <div className="user-info">
