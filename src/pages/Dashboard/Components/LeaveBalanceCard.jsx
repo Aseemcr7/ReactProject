@@ -28,7 +28,7 @@ function LeaveBalanceCard({
                     </span>
                 </span>
 
-                <button type="button" className="toggle-btn" aria-label="Toggle Leave Balance" style={{ backgroundColor : "black" }}>
+                <button type="button" className="toggle-btn" aria-label="Toggle Leave Balance" style={{ color: "black" }}>
                     <i
                         className={`fas ${isExpanded
                                 ? "fa-chevron-up"

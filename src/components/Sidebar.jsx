@@ -1,4 +1,4 @@
-import Nittany from '../assets/Images/nittany.png';
+import Logo from '../assets/Images/CompanyLogo.png';
 import '../assets/Css/Sidebar.css';
 
 export default function Sidebar() {
@@ -8,7 +8,7 @@ export default function Sidebar() {
             <nav className="sidebar" id="mainSidebar">
                 <div className="sidebar-brand">
                     <div className="brand-name">
-                        <img src={Nittany} className="logo-img" />
+                        <img src={Logo} className="logo-img" />
                     </div>
                 </div>
                 <nav className="sidebar-nav">
