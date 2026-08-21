@@ -1,12 +1,6 @@
 import { useState } from "react";
 
-function LeaveBalanceCard({
-    casualLeave = "4",
-    sickLeave = "5",
-    privilegeLeave = "12",
-    totalLeave = "21",
-    date = "07/31/2026",
-}) {
+function LeaveBalanceCard({LeaveBalanceCardData}) {
     const [isExpanded, setIsExpanded] = useState(true);
 
     const handleToggle = () => {
@@ -24,7 +18,7 @@ function LeaveBalanceCard({
                     <i className="fas fa-calendar-check"></i>
                     {" "}Leave Balance{" "}
                     <span className="card-date">
-                        {date}
+                        {LeaveBalanceCardData.asOfDate}
                     </span>
                 </span>
 
@@ -54,7 +48,7 @@ function LeaveBalanceCard({
                             </span>
 
                             <h4>
-                                {casualLeave}
+                                {LeaveBalanceCardData.casualLeave}
                             </h4>
 
                             <small>
@@ -69,7 +63,7 @@ function LeaveBalanceCard({
                             </span>
 
                             <h4>
-                                {sickLeave}
+                                {LeaveBalanceCardData.sickLeave}
                             </h4>
 
                             <small>
@@ -84,7 +78,7 @@ function LeaveBalanceCard({
                             </span>
 
                             <h4>
-                                {privilegeLeave}
+                                {LeaveBalanceCardData.privilegeLeave}
                             </h4>
 
                             <small>
@@ -99,7 +93,7 @@ function LeaveBalanceCard({
                             </span>
 
                             <h4>
-                                {totalLeave}
+                                {LeaveBalanceCardData.totalLeave}
                             </h4>
 
                             <small>

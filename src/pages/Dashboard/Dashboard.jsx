@@ -1,103 +1,155 @@
-import StartCard from "../../components/StartCard"
-import TodaySwipeCard from "./Components/TodaySwipeCard"
-import LeaveBalanceCard from "./Components/LeaveBalanceCard"
-import '../../assets/Css/Dashboard.css';
+import StartCard from "../../components/StartCard";
+import TodaySwipeCard from "./Components/TodaySwipeCard";
+import LeaveBalanceCard from "./Components/LeaveBalanceCard";
+import "../../assets/Css/Dashboard.css";
+import "../../assets/Css/Loader.css";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+
 
 export default function Dashboard() {
-    return (<>
+    const navigate = useNavigate();
+    const [DashboardData, setDashboardData] = useState(null);
+    const [Loader, setLoader] = useState(true);
+    const [ErrorMsg, setErrorMsg] = useState(null);
 
-        <div id="attendanceModal" className="modal" style={{ display: "none" }}>
-            <div className="modal-content" id="attendanceContent">
-                <div className="popup-topbar">
-                    <div className="popup-topbar-left">
-                        <div className="popup-month-title" id="period">June 2026</div>
-                    </div>
-                    <div className="popup-topbar-right">
-                        <div className="popup-leave-badge" id="Leavedays">Total Leave : 0</div>
-                        <div className="popup-close-btn" onClick="closeAttendancePopup()">&#x2715;</div>
-                    </div>
-                </div>
+    const today = new Date();
 
-                <div className="card">
-                    <div className="popup-body">
-                        <div className="calendar-wrapper">
+    const daysInMonth = new Date(
+        today.getFullYear(),
+        today.getMonth() + 1,
+        0
+    ).getDate();
 
-                            <button id="btnPrev"
-                                className="month-nav"
-                                onClick="changeMonth(-1)">
-                                <i className="fas fa-chevron-left"></i>
-                            </button>
+    useEffect(() => {
+        const controller = new AbortController();
 
-                            <div className="calendar-container">
+        const loadDashboardData = async () => {
+            try {
+                setLoader(true);
+                setErrorMsg(null);
 
-                                <div id="attendanceLoader"
-                                    className="calendar-loader"
-                                    style={{ display: "none" }}>
-                                    <div className="loader-spinner"></div>
-                                </div>
+                const response = await fetch(
+                    "https://localhost:7014/api/User/Dashboard",
+                    {
+                        method: "GET",
+                        credentials: "include",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        signal: controller.signal,
+                    }
+                );
 
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        alert("Session Expired Login to Continue !.")
+                        navigate("/Login");
+                    } else {
+                        setErrorMsg("Something went wrong");
+                    }
 
-                                <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: "5px", marginBottom: "6px" }}>
+                    return;
+                }
 
-                                    <div className="dow-header-cell">Mon</div>
-                                    <div className="dow-header-cell">Tue</div>
-                                    <div className="dow-header-cell">Wed</div>
-                                    <div className="dow-header-cell">Thu</div>
-                                    <div className="dow-header-cell">Fri</div>
-                                    <div className="dow-header-cell">Sat</div>
-                                    <div className="dow-header-cell">Sun</div>
-                                </div>
+                const data = await response.json();
 
-                                <div className="cal-grid1" id="calGrid"></div>
+                console.log(data);
 
-                            </div>
+                setDashboardData(data);
+            } catch (error) {
+                // Ignore abort errors
+                if (error.name === "AbortError") {
+                    return;
+                }
 
-                            <button id="btnNext"
-                                className="month-nav"
-                                onClick="changeMonth(1)">
-                                <i className="fas fa-chevron-right"></i>
-                            </button>
+                console.error(error);
+                setErrorMsg("Unable to connect to the server");
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoader(false);
+                }
+            }
+        };
 
-                        </div>
-                    </div>
-                    <div className="legend">
-                        <div className="leg-item"><div className="leg-pip lp-P"></div> Present</div>
-                        <div className="leg-item"><div className="leg-pip lp-A"></div> Absent (A/L)</div>
-                        <div className="leg-item"><div className="leg-pip lp-L"></div> Holiday (H)</div>
-                        <div className="leg-item"><div className="leg-pip lp-np"></div>NightShift</div>
-                    </div>
+        loadDashboardData();
 
-                </div>
+        return () => {
+            controller.abort();
+        };
+    }, []);
 
+    if (Loader && !DashboardData) {
+        return <span className="loader"></span>;
+    }
+
+    if (ErrorMsg) {
+        return <h4>{ErrorMsg}</h4>;
+    }
+
+    return (
+        <>
+            <div className="stats-grid">
+                <StartCard
+                    variant="primary"
+                    animation="anim-up-1"
+                    tooltip=""
+                    icon="fas fa-users"
+                    value={DashboardData?.leave.totalRequests || 0}
+                    label="Total Leave Applied"
+                />
+
+                <StartCard
+                    variant="warning"
+                    animation="anim-up-2"
+                    tooltip=""
+                    icon="fas fa-clock"
+                    value={DashboardData?.leave.approvedCount || 0}
+                    label="Approved Leaves"
+                />
+
+                <StartCard
+                    variant="danger"
+                    animation="anim-up-3"
+                    tooltip=""
+                    icon="fas fa-user-minus"
+                    value={DashboardData?.leave.pendingCount || 0}
+                    label="Pending Requests"
+                />
+
+                <StartCard
+                    variant="success"
+                    animation="anim-up-4"
+                    tooltip=""
+                    icon="fas fa-user-check"
+                    value={DashboardData?.leave.rejectedCount || 0}
+                    label="Rejected Request"
+                />
+
+                <StartCard
+                    variant="danger"
+                    animation="anim-up-5"
+                    tooltip="Click to view Attendance"
+                    icon="fas fa-calendar-check"
+                    value={daysInMonth}
+                    label="This Month Total Days"
+                />
             </div>
 
-        </div>
-
-        <div className="stats-grid">
-            <StartCard id="team-members-card" variant="primary" animation="anim-up-1" tooltip="Click to view Team Members" icon="fas fa-users"
-                value={25}
-                label="Team Members"
-            />
-            <StartCard id="pendingcardid" variant="warning" animation="anim-up-2" tooltip="Click to view Pending Approval's" icon="fas fa-clock"
-                value={8}
-                label="Pending Approvals"
-            />
-            <StartCard id="AbsentId" variant="danger" animation="anim-up-3" tooltip="Click to view Today's Leave Employee List" icon="fas fa-user-minus"
-                value={1}
-                label="On Leave Today"
-            />
-            <StartCard id="Presentid" variant="success" animation="anim-up-4" tooltip="Click to view employee swipe list" icon="fas fa-user-check"
-                value={24}
-                label="Present Today as per Swipe"
-            />
-            <StartCard id="Attendanceid" variant="danger" animation="anim-up-5" tooltip="Click to view Attendance" icon="fas fa-calendar-check"
-                value={31}
-                label="This Month Total Days"
-            />                        
-        </div>
-        <div className="dashboard-row mt-2">
-            <TodaySwipeCard />
-            <LeaveBalanceCard />
-        </div>       
-        </>);
+            <div className="dashboard-row mt-2">
+                {DashboardData?.swipeDetails && (
+                    <TodaySwipeCard
+                        SwipeCardData={DashboardData.swipeDetails[0]}
+                    />
+                )}
+                {DashboardData?.leaveDetails && (
+                    <LeaveBalanceCard
+                        LeaveBalanceCardData={DashboardData.leaveDetails}
+                    />
+                )}
+                
+            </div>
+        </>
+    );
 }

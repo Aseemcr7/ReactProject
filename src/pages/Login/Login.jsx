@@ -2,13 +2,15 @@ import Logo from '../../assets/Images/CompanyLogo.png';
 import '../../assets/Css/Login.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useAppContext } from '../../context/useAppContext';
 function Login() {
     const navigate = useNavigate();
+    const { setAppData } = useAppContext();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');    
+    
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -42,11 +44,13 @@ function Login() {
             const data = await response.json();
             console.log(data);
 
+            setAppData(data);
+
             // Example:
             // localStorage.setItem('token', data.token);
 
             //Navigate to dashboard
-            navigate(data.redirect);
+            navigate(data.redirectController);
 
         }
         catch (error) {

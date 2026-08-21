@@ -1,6 +1,7 @@
 import '../assets/Css/Sidebar.css';
 
-export default function Header() {
+export default function Header({ employeeData }) {    
+    const initial = employeeData?.userName?.substring(0, 1).toUpperCase() || '';
     return (
         <>
             <header className="main-header">
@@ -11,10 +12,10 @@ export default function Header() {
                 <div className="header-actions">
                     <div className="dropdown">
                         <div className="header-profile" id="profileToggle">
-                            <div className="profile-avatar">@initials</div>
+                            <div className="profile-avatar">{initial}</div>
                             <div>
-                                <div className="profile-name">@empName</div>
-                                <div className="profile-role">@roleLabel</div>
+                                <div className="profile-name">{employeeData?.userName}</div>
+                                <div className="profile-role">{employeeData?.role}</div>
                             </div>
                             <i
                                 className="fas fa-chevron-down"

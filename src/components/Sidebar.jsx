@@ -1,7 +1,9 @@
 import Logo from '../assets/Images/CompanyLogo.png';
 import '../assets/Css/Sidebar.css';
 
-export default function Sidebar() {
+export default function Sidebar({ employeeData }) {
+    
+    
     return (
         <>
             <div className="sidebar-overlay" id="sidebarOverlay"></div>
@@ -19,7 +21,7 @@ export default function Sidebar() {
                         <SidebarLink href="/ApprovalPending" icon="fas fa-check-double" label="Approval" />
                     </ul>
                 </nav >
-                <SideFooter />
+                <SideFooter employee={employeeData } />
             </nav>
         </>
     )
@@ -33,15 +35,16 @@ function SidebarLink({ href, icon, label }) {
     )
 }
 
-function SideFooter() {
+function SideFooter({ employee }) {    
+    const initial = employee?.userName?.substring(0, 1).toUpperCase() || '';
     return (
         <>
             <div className="sidebar-footer">
                 <div className="user-card">
-                    <div className="user-avatar">@initials</div>
+                    <div className="user-avatar">{initial}</div>
                     <div className="user-info">
-                        <div className="user-name">@empName</div>
-                        <div className="user-role">@roleLabel &bull; EMP-@empId</div>
+                        <div className="user-name">{employee?.userName}</div>
+                        <div className="user-role">{employee?.role} &bull; EMP-{employee?.empId}</div>
                     </div>
                     <a href="/Logout" title="Logout"
                         style={{ color: 'var(--sidebar-muted)', marginLeft: 'auto', fontSize: '15px' }}>
